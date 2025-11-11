@@ -1,0 +1,37 @@
+{% load static %}
+<!-- Skip link for keyboard users -->
+<a class="skip-link" href="#content">Skip to content</a>
+<header id="header" role="banner">
+  <div class="header-inner">
+    <a href="/" class="logo">My shop</a>
+    <nav class="header-nav" role="navigation" aria-label="Main">
+      <div class="account-links" aria-live="polite">
+        {% if request.user.is_authenticated %}
+          <span class="username">Hello {{ request.user.first_name|default:request.user.username }},</span>
+          <a href="{% url 'dashboard' %}">Dashboard</a>
+          <span class="sep">|</span>
+          <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+          <span class="sep">|</span>
+          <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+</header>
+<div id="subheader">
+  <div class="cart">
+    {% with total_items=cart|length %}
+      {% if total_items > 0 %}
+        Your cart:
+        <a href="{% url 'cart:cart_detail' %}">
+          {{ total_items }} item{{ total_items|pluralize }},
+          ${{ cart.get_total_price }}
+        </a>
+      {% elif not order %}
+        Your cart is empty.
+      {% endif %}
+    {% endwith %}
+  </div>
+</div>
