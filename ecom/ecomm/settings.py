@@ -59,8 +59,18 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
+    # We're specifying loaders explicitly below; when loaders is set,
+    # APP_DIRS must be False (per Django requirements).
+    'APP_DIRS': False,
         'OPTIONS': {
+            # During development, prefer the filesystem and app_directories
+            # loaders so templates are reloaded on each request. The
+            # cached loader can cause stale compiled templates to be
+            # served until the process is fully restarted.
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ],
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -139,6 +149,12 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 CART_SESSION_ID = 'cart'
+
+# Authentication redirects
+LOGIN_REDIRECT_URL = 'account:dashboard'
+LOGIN_URL = 'account:login'
+LOGOUT_REDIRECT_URL = 'account:login'
+
 # Celery Configuration
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_RESULT_BACKEND = 'rpc://'

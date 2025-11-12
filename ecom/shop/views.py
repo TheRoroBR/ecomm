@@ -10,11 +10,17 @@ def product_list(request, category_slug=None):
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
+    # Pass a simple scalar for the currently selected category (slug)
+    # so templates can compare literals safely without complex inline
+    # expressions that the template parser may misinterpret.
     return render(request,
                   'shop/product/list.html',
-                  {'category': category,
-                   'categories': categories,
-                   'products': products})
+                  {
+                      'category': category,
+                      'categories': categories,
+                      'products': products,
+                      'current_category_slug': category.slug if category else None,
+                  })
 
 
 def product_detail(request, id, slug):
@@ -23,6 +29,13 @@ def product_detail(request, id, slug):
                                 slug=slug,
                                 available=True)
     cart_product_form = CartAddProductForm()
+    # If product has stock, set the form's max attribute to the stock value
+    if hasattr(product, 'stock') and product.stock is not None:
+        try:
+            cart_product_form.fields['quantity'].widget.attrs['max'] = product.stock
+        except Exception:
+            # If form structure changes, ignore and use default
+            pass
     return render(request,
                   'shop/product/detail.html',
                   {'product': product,

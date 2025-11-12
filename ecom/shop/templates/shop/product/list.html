@@ -1,35 +1,195 @@
-{% extends "shop/base.html" %}
+{% extends 'shop/base.html' %}
 {% load static %}
 
 {% block title %}
-  {% if category %}{{ category.name }}{% else %}Products{% endif %}
+{% if category %}{{ category.name }}{% else %}Products{% endif %}
 {% endblock %}
 
 {% block content %}
-  <div id="sidebar">
-    <h3>Categories</h3>
-    <ul>
-      <li {% if not category %}class="selected"{% endif %}>
-        <a href="{% url "shop:product_list" %}">All</a>
+<div id="sidebar">
+  <h3>Categories</h3>
+  <ul>
+      <li {% if not current_category_slug %}class="selected" {% endif %}>
+      <a href="{% url 'shop:product_list' %}">All</a>
+    </li>
+    {% for c in categories %}
+      <li{% if current_category_slug == c.slug %} class="selected"{% endif %}>
+      <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
       </li>
-      {% for c in categories %}
-        <li {% if category.slug == c.slug %}class="selected"{% endif %}>
-          <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
-        </li>
       {% endfor %}
-    </ul>
-  </div>
-  <div id="main" class="product-list">
-    <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
-    {% for product in products %}
-      <div class="item">
-        <a href="{{ product.get_absolute_url }}">
-          <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
-        </a>
-        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
-        <br>
-        ${{ product.price }}
+  </ul>
+</div>
+<div id="main" class="product-list">
+  <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
+  {% for product in products %}
+  <div class="item">
+    <div class="product-image">
+      <a href="{{ product.get_absolute_url }}">
+        <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+          alt="{{ product.name }}">
+      </a>
+    </div>
+    <div class="product-info">
+      <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+      <p class="price">${{ product.price }}</p>
+      {% if product.stock and product.stock > 0 %}
+      <form action="{% url 'cart:cart_add' product.id %}" method="post" class="add-to-cart-form">
+        <div class="quantity-selector">
+          <label for="quantity-{{ product.id }}">Qty:</label>
+          <input type="number" name="quantity" id="quantity-{{ product.id }}" class="quantity-input" value="1" min="1"
+            max="{{ product.stock }}" />
+        </div>
+        {% csrf_token %}
+        <input type="hidden" name="override" value="False">
+        <button type="submit" class="btn-add-cart">Add to Cart</button>
+      </form>
+      {% else %}
+      <div class="out-of-stock">
+        <span class="oos-label">Out of stock</span>
       </div>
-    {% endfor %}
+      {% endif %}
+    </div>
   </div>
-{% endblock %}  
+  {% endfor %}
+</div>
+{% endblock %}
+
+<style>
+  #main.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+  }
+
+  #main.product-list h1 {
+    grid-column: 1 / -1;
+  }
+
+  .item {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .product-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background-color: #f5f5f5;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-info {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+  }
+
+  .product-info h3 a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s;
+  }
+
+  .product-info h3 a:hover {
+    color: #4CAF50;
+  }
+
+  .price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4CAF50;
+    margin: 0.5rem 0 1rem 0;
+  }
+
+  .add-to-cart-form {
+    margin-top: auto;
+  }
+
+  .quantity-selector {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .quantity-selector label {
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+  }
+
+  .quantity-select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: white;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .quantity-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+  }
+
+  .btn-add-cart {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .btn-add-cart:hover {
+    background-color: #45a049;
+  }
+
+  .btn-add-cart:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 768px) {
+    #main.product-list {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      padding: 0.5rem;
+    }
+
+    .product-image {
+      height: 150px;
+    }
+
+    .product-info {
+      padding: 1rem;
+    }
+  }
+</style>

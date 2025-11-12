@@ -34,6 +34,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10,
                                 decimal_places=2)
     available = models.BooleanField(default=True)
+    # Stock available for this product. Used to limit quantity added to cart.
+    stock = models.PositiveIntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

@@ -33,7 +33,8 @@ def user_login(request):
 def dashboard(request):
     return render(request,
                   'account/dashboard.html',
-                  {'section': 'dashboard'})
+                  {'section': 'dashboard',
+                   'profile': request.user.profile})
 
 
 def register(request):

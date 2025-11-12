@@ -8,16 +8,16 @@
       <div class="account-links" aria-live="polite">
         {% if request.user.is_authenticated %}
           <span class="username">Hello {{ request.user.first_name|default:request.user.username }},</span>
-          <a href="{% url 'dashboard' %}">Dashboard</a>
+          <a href="{% url 'account:dashboard' %}">Dashboard</a>
           <span class="sep">|</span>
-          <form method="post" action="{% url 'logout' %}" style="display:inline">
+          <form method="post" action="{% url 'account:logout' %}" style="display:inline">
             {% csrf_token %}
             <button type="submit" class="link-button">Logout</button>
           </form>
         {% else %}
-          <a href="{% url 'login' %}">Login</a>
+          <a href="{% url 'account:login' %}">Login</a>
           <span class="sep">|</span>
-          <a href="{% url 'register' %}">Register</a>
+          <a href="{% url 'account:register' %}">Register</a>
         {% endif %}
       </div>
     </nav>
