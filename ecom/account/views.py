@@ -31,10 +31,11 @@ def user_login(request):
 
 @login_required
 def dashboard(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
     return render(request,
                   'account/dashboard.html',
                   {'section': 'dashboard',
-                   'profile': request.user.profile})
+                   'profile': profile})
 
 
 def register(request):
@@ -62,6 +63,9 @@ def register(request):
 
 @login_required
 def edit(request):
+    # Ensure profile exists
+    Profile.objects.get_or_create(user=request.user)
+    
     if request.method == 'POST':
         user_form = UserEditForm(instance=request.user,
                                  data=request.POST)

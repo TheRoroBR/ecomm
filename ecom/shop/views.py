@@ -1,3 +1,11 @@
+def homepage(request):
+    categories = Category.objects.all()
+    # Exibe só produtos em destaque (exemplo: os 8 mais recentes)
+    featured_products = Product.objects.filter(available=True).order_by('-created')[:8]
+    return render(request, 'shop/homepage.html', {
+        'categories': categories,
+        'featured_products': featured_products,
+    })
 from django.shortcuts import render, get_object_or_404
 from cart.forms import CartAddProductForm
 from .models import Category, Product

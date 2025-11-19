@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Ecomm Fitness - Suplementos e Nutrição Esportiva{% endblock %}
+{% block content %}
+<link href="{% static 'css/homepage.css' %}?v=5" rel="stylesheet">
+<div class="homepage-container">
+    <header class="main-header">
+        <div class="header-top">
+            <div class="logo">💪 ECOMM FITNESS</div>
+            <div class="header-search">
+                <form action="{% url 'shop:product_list' %}" method="get">
+                    <input type="text" name="q" placeholder="O que você procura?" class="search-input" />
+                    <button type="submit" class="search-btn">🔍</button>
+                </form>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'account:login' %}" class="user-btn">👤 Entrar</a>
+                <a href="{% url 'cart:cart_detail' %}" class="cart-btn" id="cart-link">
+                    🛒 Carrinho <span id="cart-count"></span>
+                </a>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <a href="{% url 'shop:homepage' %}" class="nav-item active">INÍCIO</a>
+            {% for category in categories %}
+            <a href="{{ category.get_absolute_url }}" class="nav-item">{{ category.name|upper }}</a>
+            {% endfor %}
+            <a href="#" class="nav-item promo">BLACK FRIDAY</a>
+        </nav>
+    </header>
+
+    <section class="hero-banner">
+        <div class="banner-slide">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1920&q=80"
+                alt="Black Friday" class="banner-bg">
+            <div class="banner-overlay"></div>
+            <div class="banner-content">
+                <span class="banner-tag">BLACK FRIDAY</span>
+                <h1 class="banner-title">DESCONTOS EXCLUSIVOS<br>PARA ENCERRAR O ANO<br>COM FORÇA TOTAL</h1>
+                <p class="banner-subtitle">Até 70% OFF + Frete Grátis</p>
+                <a href="{% url 'shop:product_list' %}" class="banner-cta">APROVEITE AGORA</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="benefits-bar">
+        <div class="benefit-item">
+            <span class="benefit-icon">🚚</span>
+            <div>
+                <strong>Frete Grátis</strong>
+                <p>Em compras acima de R$280</p>
+            </div>
+        </div>
+        <div class="benefit-item">
+            <span class="benefit-icon">💳</span>
+            <div>
+                <strong>3% OFF no Cartão</strong>
+                <p>*consulte condições</p>
+            </div>
+        </div>
+        <div class="benefit-item">
+            <span class="benefit-icon">🎁</span>
+            <div>
+                <strong>Cashback</strong>
+                <p>Participe do programa</p>
+            </div>
+        </div>
+        <div class="benefit-item">
+            <span class="benefit-icon">🔒</span>
+            <div>
+                <strong>Compra Segura</strong>
+                <p>Seus dados protegidos</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="categories-section">
+        <h2 class="section-title">🏋️ Busque por Categoria</h2>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{{ category.get_absolute_url }}" class="category-card-new">
+                <div class="category-image">
+                    {% if category.name == "Whey" or "Whey" in category.name %}
+                    <img src="https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=300&q=80"
+                        alt="Whey Protein">
+                    {% elif category.name == "Creatina" or "Creatina" in category.name %}
+                    <img src="https://images.unsplash.com/photo-1579722820308-d74e571900a9?auto=format&fit=crop&w=300&q=80"
+                        alt="Creatina">
+                    {% elif category.name == "Barra de Proteína" or "Barra" in category.name %}
+                    <img src="https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&w=300&q=80"
+                        alt="Barra de Proteína">
+                    {% elif category.name == "Pré-Treino" or "Treino" in category.name %}
+                    <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=300&q=80"
+                        alt="Pré-Treino">
+                    {% elif category.name == "Acessório" or "Acessório" in category.name %}
+                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=300&q=80"
+                        alt="Acessórios">
+                    {% elif category.name == "Snack" or "Snack" in category.name %}
+                    <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=300&q=80"
+                        alt="Snacks">
+                    {% elif category.name == "Moda" or "Moda" in category.name %}
+                    <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=300&q=80"
+                        alt="Moda Fitness">
+                    {% elif "olivitam" in category.name or "Vitamina" in category.name or "Vitamin" in category.name %}
+                    <img src="https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?auto=format&fit=crop&w=300&q=80"
+                        alt="Vitaminas">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=300&q=80"
+                        alt="{{ category.name }}">
+                    {% endif %}
+                    <div class="category-overlay"></div>
+                </div>
+                <h3 class="category-name">{{ category.name }}</h3>
+            </a>
+            {% empty %}
+            <p>Nenhuma categoria cadastrada</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="featured-products">
+        <h2 class="section-title">🔥 Mais Vendidos</h2>
+        <div class="product-grid">
+            {% for product in featured_products %}
+            <div class="product-card-new">
+                <span class="product-badge">-15%</span>
+                <a href="{{ product.get_absolute_url }}" class="product-link">
+                    <div class="product-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=400&q=80"
+                            alt="Produto">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">{{ product.name }}</h3>
+                        <div class="product-rating">⭐⭐⭐⭐⭐ (127)</div>
+                        <div class="product-pricing">
+                            <span class="price-old">R$ {{ product.price|floatformat:2 }}</span>
+                            <span class="price-current">R$ {{ product.price|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                </a>
+                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="add-to-cart-form"
+                    onsubmit="addToCart(event, this)">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <button type="button" class="qty-btn" onclick="changeQty(this, -1)">-</button>
+                        <input type="number" name="quantity" value="1" min="1" max="999" class="qty-input">
+                        <button type="button" class="qty-btn" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                    <button type="submit" class="product-buy">
+                        <span class="btn-text">COMPRAR</span>
+                        <span class="btn-success" style="display:none;">✓ ADICIONADO!</span>
+                    </button>
+                </form>
+            </div>
+            {% empty %}
+            <p>Nenhum produto em destaque</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="footer-top">
+            <div class="footer-col">
+                <h4>INSTITUCIONAL</h4>
+                <a href="#">Sobre Nós</a>
+                <a href="#">Trabalhe Conosco</a>
+                <a href="#">Política de Privacidade</a>
+                <a href="#">Termos de Uso</a>
+            </div>
+            <div class="footer-col">
+                <h4>ATENDIMENTO</h4>
+                <a href="#">Central de Ajuda</a>
+                <a href="#">Trocas e Devoluções</a>
+                <a href="#">Rastreio de Pedidos</a>
+                <a href="#">Fale Conosco</a>
+            </div>
+            <div class="footer-col">
+                <h4>REDES SOCIAIS</h4>
+                <div class="social-links">
+                    <a href="#">📘 Facebook</a>
+                    <a href="#">📷 Instagram</a>
+                    <a href="#">▶️ YouTube</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>FORMAS DE PAGAMENTO</h4>
+                <div class="payment-methods">
+                    <span>💳 Visa</span>
+                    <span>💳 Mastercard</span>
+                    <span>💳 Elo</span>
+                    <span>📱 Pix</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Ecomm Fitness. Todos os direitos reservados. CNPJ: 00.000.000/0001-00</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    function updateCartDisplay() {
+        fetch("{% url 'cart:cart_detail' %}", {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const cartText = doc.body.textContent || doc.body.innerText;
+
+                const itemsMatch = cartText.match(/(\d+)\s+items?/i);
+                const priceMatch = cartText.match(/\$?(\d+[.,]\d+)/);
+
+                if (itemsMatch) {
+                    const count = itemsMatch[1];
+                    const cartCount = document.getElementById('cart-count');
+                    if (count > 0) {
+                        cartCount.textContent = `(${count})`;
+                        cartCount.style.fontWeight = '700';
+                    } else {
+                        cartCount.textContent = '';
+                    }
+                }
+            })
+            .catch(error => console.error('Erro ao atualizar carrinho:', error));
+    }
+
+    function changeQty(btn, delta) {
+        const input = btn.parentElement.querySelector('.qty-input');
+        let value = parseInt(input.value) || 1;
+        value = Math.max(1, Math.min(999, value + delta));
+        input.value = value;
+    }
+
+    function addToCart(event, form) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const button = form.querySelector('.product-buy');
+        const btnText = button.querySelector('.btn-text');
+        const btnSuccess = button.querySelector('.btn-success');
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    btnText.style.display = 'none';
+                    btnSuccess.style.display = 'inline';
+                    button.style.background = '#28a745';
+
+                    // Update Black Button Cart Count
+                    const cartCount = document.getElementById('cart-count');
+                    if (cartCount) {
+                        if (data.cart_total_items > 0) {
+                            cartCount.textContent = `(${data.cart_total_items})`;
+                            cartCount.style.fontWeight = '700';
+                        } else {
+                            cartCount.textContent = '';
+                        }
+                    }
+
+                    // Update Header Cart (Your cart)
+                    const headerCartCount = document.getElementById('header-cart-count');
+                    const headerCartTotal = document.getElementById('header-cart-total');
+
+                    if (headerCartCount) headerCartCount.textContent = data.cart_total_items;
+                    if (headerCartTotal) headerCartTotal.textContent = data.cart_total_price.toFixed(2);
+
+                    // Handle case where cart was empty and spans didn't exist
+                    const headerCart = document.getElementById('header-cart');
+                    if (headerCart && (!headerCartCount || !headerCartTotal)) {
+                        headerCart.innerHTML = `
+                            Seu carrinho:
+                            <a href="{% url 'cart:cart_detail' %}">
+                              <span id="header-cart-count">${data.cart_total_items}</span> itens,
+                              R$ <span id="header-cart-total">${data.cart_total_price.toFixed(2)}</span>
+                            </a>
+                         `;
+                    }
+
+                    setTimeout(() => {
+                        btnText.style.display = 'inline';
+                        btnSuccess.style.display = 'none';
+                        button.style.background = '';
+                    }, 2000);
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao adicionar ao carrinho:', error);
+                alert('Erro ao adicionar ao carrinho. Tente novamente.');
+            });
+    }
+
+    // document.addEventListener('DOMContentLoaded', updateCartDisplay);
+</script>
+
+{% endblock %}

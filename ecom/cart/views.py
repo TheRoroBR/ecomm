@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 from shop.models import Product
 from .cart import Cart
 from .forms import CartAddProductForm
 from django.contrib import messages
-
 
 @require_POST
 def cart_add(request, product_id):
@@ -28,6 +28,8 @@ def cart_add(request, product_id):
         # If product has a stock attribute, enforce it
         product_stock = getattr(product, 'stock', None)
         if product_stock is not None and new_total > product_stock:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'error': f"Only {product_stock} unit(s) available."}, status=400)
             messages.error(request, f"Only {product_stock} unit(s) of '{product.name}' available. You tried to add {new_total}.")
             # Redirect back to the referring page if possible
             ref = request.META.get('HTTP_REFERER')
@@ -38,6 +40,14 @@ def cart_add(request, product_id):
         cart.add(product=product,
                  quantity=qty,
                  override_quantity=override)
+        
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'cart_total_items': len(cart),
+                'cart_total_price': float(cart.get_total_price()),
+                'success': True
+            })
+
     return redirect('cart:cart_detail')
 
 

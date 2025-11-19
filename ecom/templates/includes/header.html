@@ -7,34 +7,34 @@
     <nav class="header-nav" role="navigation" aria-label="Main">
       <div class="account-links" aria-live="polite">
         {% if request.user.is_authenticated %}
-          <span class="username">Hello {{ request.user.first_name|default:request.user.username }},</span>
-          <a href="{% url 'account:dashboard' %}">Dashboard</a>
-          <span class="sep">|</span>
-          <form method="post" action="{% url 'account:logout' %}" style="display:inline">
-            {% csrf_token %}
-            <button type="submit" class="link-button">Logout</button>
-          </form>
+        <span class="username">Hello {{ request.user.first_name|default:request.user.username }},</span>
+        <a href="{% url 'account:dashboard' %}">Dashboard</a>
+        <span class="sep">|</span>
+        <form method="post" action="{% url 'account:logout' %}" style="display:inline">
+          {% csrf_token %}
+          <button type="submit" class="link-button">Logout</button>
+        </form>
         {% else %}
-          <a href="{% url 'account:login' %}">Login</a>
-          <span class="sep">|</span>
-          <a href="{% url 'account:register' %}">Register</a>
+        <a href="{% url 'account:login' %}">Login</a>
+        <span class="sep">|</span>
+        <a href="{% url 'account:register' %}">Register</a>
         {% endif %}
       </div>
     </nav>
   </div>
 </header>
 <div id="subheader">
-  <div class="cart">
+  <div class="cart" id="header-cart">
     {% with total_items=cart|length %}
-      {% if total_items > 0 %}
-        Your cart:
-        <a href="{% url 'cart:cart_detail' %}">
-          {{ total_items }} item{{ total_items|pluralize }},
-          ${{ cart.get_total_price }}
-        </a>
-      {% elif not order %}
-        Your cart is empty.
-      {% endif %}
+    {% if total_items > 0 %}
+    Seu carrinho:
+    <a href="{% url 'cart:cart_detail' %}">
+      <span id="header-cart-count">{{ total_items }}</span> itens,
+      R$ <span id="header-cart-total">{{ cart.get_total_price }}</span>
+    </a>
+    {% elif not order %}
+    Seu carrinho está vazio.
+    {% endif %}
     {% endwith %}
   </div>
 </div>
