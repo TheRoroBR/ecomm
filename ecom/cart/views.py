@@ -29,8 +29,8 @@ def cart_add(request, product_id):
         product_stock = getattr(product, 'stock', None)
         if product_stock is not None and new_total > product_stock:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'error': f"Only {product_stock} unit(s) available."}, status=400)
-            messages.error(request, f"Only {product_stock} unit(s) of '{product.name}' available. You tried to add {new_total}.")
+                return JsonResponse({'error': f"Apenas {product_stock} unidade(s) disponível(is)."}, status=400)
+            messages.error(request, f"Apenas {product_stock} unidade(s) de '{product.name}' disponível(is). Você tentou adicionar {new_total}.")
             # Redirect back to the referring page if possible
             ref = request.META.get('HTTP_REFERER')
             if ref:
@@ -42,9 +42,14 @@ def cart_add(request, product_id):
                  override_quantity=override)
         
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            # Get updated item info
+            item = cart.cart.get(str(product.id))
+            item_total_price = float(item['price']) * item['quantity']
             return JsonResponse({
                 'cart_total_items': len(cart),
                 'cart_total_price': float(cart.get_total_price()),
+                'item_quantity': item['quantity'],
+                'item_total_price': item_total_price,
                 'success': True
             })
 
@@ -56,6 +61,12 @@ def cart_remove(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'cart_total_items': len(cart),
+            'cart_total_price': float(cart.get_total_price()),
+            'success': True
+        })
     return redirect('cart:cart_detail')
 
 

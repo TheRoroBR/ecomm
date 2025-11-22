@@ -24,12 +24,15 @@ def order_create(request):
             if insufficient:
                 # Notify user and redirect back to cart
                 for prod, stock, requested in insufficient:
-                    messages.error(request, f"Not enough stock for '{prod.name}': {stock} available, you requested {requested}.")
+                    messages.error(request, f"Estoque insuficiente para '{prod.name}': {stock} disponível(is), você solicitou {requested}.")
                 return redirect('cart:cart_detail')
 
             # Everything ok, create order and decrement stock atomically
             with transaction.atomic():
-                order = form.save()
+                order = form.save(commit=False)
+                if request.user.is_authenticated:
+                    order.user = request.user
+                order.save()
                 for item in cart:
                     product = item['product']
                     qty = item['quantity']
@@ -48,12 +51,19 @@ def order_create(request):
             # clear the cart
             cart.clear()
             # launch asynchronous task
-            order_created.delay(order.id)
+            # order_created.delay(order.id)
             return render(request,
                           'orders/order/created.html',
                           {'order': order})
     else:
-        form = OrderCreateForm()
+        initial_data = {}
+        if request.user.is_authenticated:
+            initial_data = {
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'email': request.user.email,
+            }
+        form = OrderCreateForm(initial=initial_data)
     return render(request,
                   'orders/order/create.html',
                   {'cart': cart, 'form': form})

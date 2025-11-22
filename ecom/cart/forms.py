@@ -13,6 +13,7 @@ class CartAddProductForm(forms.Form):
     # control. We set a sensible default max but allow overriding via
     # settings.py (CART_MAX_QUANTITY).
     quantity = forms.IntegerField(
+        label='Quantidade',
         min_value=1,
         max_value=DEFAULT_CART_MAX_QTY,
         initial=1,

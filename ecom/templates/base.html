@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Minha Loja{% endblock %}</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
+  <link href="{% static 'css/base.css' %}" rel="stylesheet">
+  <link href="{% static 'css/homepage.css' %}?v=6" rel="stylesheet">
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  {% include 'includes/header.html' %}
+  <div id="content">
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      <li class="{{ message.tags }}">
+        {{ message|safe }}
+        <a href="#" class="close">x</a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}
+    {% endblock %}
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const forms = document.querySelectorAll('.add-to-cart-form');
+      
+      forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const url = this.action;
+          const formData = new FormData(this);
+          
+          fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+            }
+          })
+          .then(response => {
+              if (!response.ok) {
+                  return response.json().then(data => { throw new Error(data.error || 'Erro ao adicionar ao carrinho'); });
+              }
+              return response.json();
+          })
+          .then(data => {
+            if (data.success) {
+              const cartCount = document.getElementById('cart-count');
+              if (cartCount) {
+                 const formattedPrice = data.cart_total_price.toFixed(2).replace('.', ',');
+                 cartCount.innerHTML = `(${data.cart_total_items}) &nbsp;|&nbsp; R$ ${formattedPrice}`;
+              }
+              
+              // Visual feedback
+              const btn = form.querySelector('button[type="submit"], input[type="submit"]');
+              if(btn) {
+                  const originalText = btn.textContent || btn.value;
+                  const isInput = btn.tagName === 'INPUT';
+                  
+                  if(isInput) btn.value = 'Adicionado!';
+                  else btn.textContent = 'Adicionado!';
+                  
+                  btn.disabled = true;
+                  
+                  setTimeout(() => {
+                      if(isInput) btn.value = originalText;
+                      else btn.textContent = originalText;
+                      btn.disabled = false;
+                  }, 1500);
+              }
+            }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert(error.message);
+          });
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

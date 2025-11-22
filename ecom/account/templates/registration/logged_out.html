@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Logged out{% endblock %}
+{% block title %}Desconectado{% endblock %}
 
 {% block content %}
-  <div class="message-page">
-    <h1>Logged out</h1>
-    <p>You have been successfully logged out.</p>
-    <p>
-      You can <a href="{% url 'account:login' %}">log in again</a>.
-    </p>
-    <p>
-      Go back to the <a href="/">home page</a>.
-    </p>
-  </div>
+<div class="message-page">
+  <h1>Desconectado</h1>
+  <p>Você foi desconectado com sucesso.</p>
+  <p>
+    Você pode <a href="{% url 'account:login' %}">entrar novamente</a>.
+  </p>
+  <p>
+    Voltar para a <a href="/">página inicial</a>.
+  </p>
+</div>
 {% endblock %}

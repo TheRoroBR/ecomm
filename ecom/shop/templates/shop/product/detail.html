@@ -1,4 +1,4 @@
-{% extends "shop/base.html" %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block title %}
@@ -13,16 +13,17 @@
       {{ product.category }}
     </a>
   </h2>
-  <p class="price">${{ product.price }}</p>
+  <p class="price">R$ {{ product.price }}</p>
   {% if product.stock and product.stock > 0 %}
-  <form action="{% url 'cart:cart_add' product.id %}" method="post">
+  <form action="{% url 'cart:cart_add' product.id %}" method="post" class="add-to-cart-form">
     {{ cart_product_form.quantity }}
+    {{ cart_product_form.override }}
     {% csrf_token %}
-    <input type="submit" value="Add to cart">
+    <input type="submit" value="Adicionar ao carrinho">
   </form>
   {% else %}
   <div class="out-of-stock">
-    <span class="oos-label">Out of stock</span>
+    <span class="oos-label">Esgotado</span>
   </div>
   {% endif %}
   {{ product.description|linebreaks }}

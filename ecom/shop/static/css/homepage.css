@@ -14,9 +14,18 @@ body {
 }
 
 /* HEADER */
+body {
+    padding-top: 160px; /* Space for fixed header */
+}
+
 .main-header {
     background: #1a1a1a;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
 .header-top {
@@ -622,4 +631,129 @@ body {
     .footer-top {
         grid-template-columns: 1fr;
     }
+}
+
+/* CART STYLES OVERRIDE */
+#content {
+    overflow: visible !important;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+table.cart {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table.cart thead th {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 15px;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-align: left;
+}
+
+table.cart tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+table.cart tbody tr:hover {
+    background: #f9f9f9;
+}
+
+table.cart td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+table.cart img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+table.cart tr.total {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+table.cart tr.total td {
+    border: none;
+    padding: 20px 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+table.cart tr.total td.num {
+    color: #ff3333;
+    font-size: 24px;
+}
+
+/* Buttons Override */
+a.button, 
+input[type="submit"],
+button[type="submit"] {
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 14px;
+    display: inline-block;
+}
+
+a.button:hover, 
+input[type="submit"]:hover,
+button[type="submit"]:hover {
+    background: #cc0000;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+a.button.light {
+    background: #f0f0f0;
+    color: #333;
+}
+
+a.button.light:hover {
+    background: #e0e0e0;
+    color: #000;
+}
+
+/* Cart Actions */
+.cart-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-bottom: 50px;
+}
+
+/* Form inputs in cart */
+table.cart input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 60px;
+}
+
+table.cart input[type="submit"] {
+    padding: 8px 15px;
+    font-size: 12px;
+    margin-left: 5px;
 }

@@ -1,26 +1,26 @@
-{% extends "shop/base.html" %}
+{% extends "base.html" %}
 
 {% block title %}
-  Checkout
+Finalizar compra
 {% endblock %}
 
 {% block content %}
-  <h1>Checkout</h1>
-  <div class="order-info">
-    <h3>Your order</h3>
-    <ul>
-      {% for item in cart %}
-        <li>
-          {{ item.quantity }}x {{ item.product.name }}
-          <span>${{ item.total_price }}</span>
-        </li>
-      {% endfor %}
-    </ul>
-    <p>Total: ${{ cart.get_total_price }}</p>
-  </div>
-  <form method="post" class="order-form">
-    {{ form.as_p }}
-    <p><input type="submit" value="Place order"></p>
-    {% csrf_token %}
-  </form>
+<h1>Finalizar compra</h1>
+<div class="order-info">
+  <h3>Seu pedido</h3>
+  <ul>
+    {% for item in cart %}
+    <li>
+      {{ item.quantity }}x {{ item.product.name }}
+      <span>R$ {{ item.total_price }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  <p>Total: R$ {{ cart.get_total_price }}</p>
+</div>
+<form method="post" class="order-form">
+  {{ form.as_p }}
+  <p><input type="submit" value="Finalizar pedido"></p>
+  {% csrf_token %}
+</form>
 {% endblock %}

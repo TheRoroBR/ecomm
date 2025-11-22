@@ -4,30 +4,7 @@
 {% block content %}
 <link href="{% static 'css/homepage.css' %}?v=5" rel="stylesheet">
 <div class="homepage-container">
-    <header class="main-header">
-        <div class="header-top">
-            <div class="logo">💪 ECOMM FITNESS</div>
-            <div class="header-search">
-                <form action="{% url 'shop:product_list' %}" method="get">
-                    <input type="text" name="q" placeholder="O que você procura?" class="search-input" />
-                    <button type="submit" class="search-btn">🔍</button>
-                </form>
-            </div>
-            <div class="header-actions">
-                <a href="{% url 'account:login' %}" class="user-btn">👤 Entrar</a>
-                <a href="{% url 'cart:cart_detail' %}" class="cart-btn" id="cart-link">
-                    🛒 Carrinho <span id="cart-count"></span>
-                </a>
-            </div>
-        </div>
-        <nav class="main-nav">
-            <a href="{% url 'shop:homepage' %}" class="nav-item active">INÍCIO</a>
-            {% for category in categories %}
-            <a href="{{ category.get_absolute_url }}" class="nav-item">{{ category.name|upper }}</a>
-            {% endfor %}
-            <a href="#" class="nav-item promo">BLACK FRIDAY</a>
-        </nav>
-    </header>
+    <!-- Header removed as it is now in base.html -->
 
     <section class="hero-banner">
         <div class="banner-slide">

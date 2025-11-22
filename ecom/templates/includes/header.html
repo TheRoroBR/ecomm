@@ -1,40 +1,46 @@
 {% load static %}
 <!-- Skip link for keyboard users -->
-<a class="skip-link" href="#content">Skip to content</a>
-<header id="header" role="banner">
-  <div class="header-inner">
-    <a href="/" class="logo">My shop</a>
-    <nav class="header-nav" role="navigation" aria-label="Main">
-      <div class="account-links" aria-live="polite">
-        {% if request.user.is_authenticated %}
-        <span class="username">Hello {{ request.user.first_name|default:request.user.username }},</span>
-        <a href="{% url 'account:dashboard' %}">Dashboard</a>
-        <span class="sep">|</span>
-        <form method="post" action="{% url 'account:logout' %}" style="display:inline">
-          {% csrf_token %}
-          <button type="submit" class="link-button">Logout</button>
-        </form>
-        {% else %}
-        <a href="{% url 'account:login' %}">Login</a>
-        <span class="sep">|</span>
-        <a href="{% url 'account:register' %}">Register</a>
-        {% endif %}
-      </div>
-    </nav>
+<a class="skip-link" href="#content">Pular para o conteúdo</a>
+
+<header class="main-header">
+  <div class="header-top">
+    <div class="logo">
+      <a href="/" style="color: white; text-decoration: none;">💪 ECOMM FITNESS</a>
+    </div>
+    <div class="header-search">
+      <form action="{% url 'shop:product_list' %}" method="get">
+        <input type="text" name="q" placeholder="O que você procura?" class="search-input" value="{{ request.GET.q|default:'' }}" />
+        <button type="submit" class="search-btn">🔍</button>
+      </form>
+    </div>
+    <div class="header-actions">
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'account:dashboard' %}" class="user-btn">👤 Painel ({{ request.user.first_name|default:request.user.username }})</a>
+      <form method="post" action="{% url 'account:logout' %}" style="display:inline">
+        {% csrf_token %}
+        <button type="submit" class="user-btn" style="cursor:pointer;">Sair</button>
+      </form>
+      {% else %}
+      <a href="{% url 'account:login' %}" class="user-btn">👤 Entrar</a>
+      {% endif %}
+      
+      <a href="{% url 'cart:cart_detail' %}" class="cart-btn" id="cart-link">
+        🛒 Carrinho 
+        {% with total_items=cart|length %}
+        <span id="cart-count">
+          {% if total_items > 0 %}
+          ({{ total_items }}) &nbsp;|&nbsp; R$ {{ cart.get_total_price|floatformat:2 }}
+          {% endif %}
+        </span>
+        {% endwith %}
+      </a>
+    </div>
   </div>
+  <nav class="main-nav">
+    <a href="{% url 'shop:homepage' %}" class="nav-item {% if request.resolver_match.view_name == 'shop:homepage' %}active{% endif %}">INÍCIO</a>
+    {% for c in categories %}
+    <a href="{{ c.get_absolute_url }}" class="nav-item {% if category and category.slug == c.slug %}active{% endif %}">{{ c.name|upper }}</a>
+    {% endfor %}
+    <a href="#" class="nav-item promo">BLACK FRIDAY</a>
+  </nav>
 </header>
-<div id="subheader">
-  <div class="cart" id="header-cart">
-    {% with total_items=cart|length %}
-    {% if total_items > 0 %}
-    Seu carrinho:
-    <a href="{% url 'cart:cart_detail' %}">
-      <span id="header-cart-count">{{ total_items }}</span> itens,
-      R$ <span id="header-cart-total">{{ cart.get_total_price }}</span>
-    </a>
-    {% elif not order %}
-    Seu carrinho está vazio.
-    {% endif %}
-    {% endwith %}
-  </div>
-</div>

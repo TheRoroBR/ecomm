@@ -6,6 +6,7 @@ from django.contrib import messages
 from .forms import LoginForm, UserRegistrationForm, \
                    UserEditForm, ProfileEditForm
 from .models import Profile
+from orders.models import Order
 
 
 def user_login(request):
@@ -19,11 +20,11 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponse('Authenticated successfully')
+                    return HttpResponse('Autenticado com sucesso')
                 else:
-                    return HttpResponse('Disabled account')
+                    return HttpResponse('Conta desativada')
             else:
-                return HttpResponse('Invalid login')
+                return HttpResponse('Login inválido')
     else:
         form = LoginForm()
     return render(request, 'account/login.html', {'form': form})
@@ -32,10 +33,12 @@ def user_login(request):
 @login_required
 def dashboard(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
+    orders = Order.objects.filter(user=request.user)
     return render(request,
                   'account/dashboard.html',
                   {'section': 'dashboard',
-                   'profile': profile})
+                   'profile': profile,
+                   'orders': orders})
 
 
 def register(request):
@@ -50,7 +53,15 @@ def register(request):
             # Save the User object
             new_user.save()
             # Create the user profile
-            Profile.objects.create(user=new_user)
+            Profile.objects.create(user=new_user,
+                                   cpf=user_form.cleaned_data['cpf'],
+                                   phone=user_form.cleaned_data['phone'],
+                                   postal_code=user_form.cleaned_data['postal_code'],
+                                   address=user_form.cleaned_data['address'],
+                                   address_number=user_form.cleaned_data['address_number'],
+                                   complement=user_form.cleaned_data['complement'],
+                                   city=user_form.cleaned_data['city'],
+                                   state=user_form.cleaned_data['state'])
             return render(request,
                           'account/register_done.html',
                           {'new_user': new_user})
@@ -76,10 +87,10 @@ def edit(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, 'Profile updated '\
-                                      'successfully')
+            messages.success(request, 'Perfil atualizado com '\
+                                      'sucesso')
         else:
-            messages.error(request, 'Error updating your profile')
+            messages.error(request, 'Erro ao atualizar seu perfil')
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(
