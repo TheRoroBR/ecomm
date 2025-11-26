@@ -1,15 +1,419 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Criar uma conta{% endblock %}
+{% block title %}Criar Conta - Saúde & Forma{% endblock %}
 
 {% block content %}
-<h1>Criar uma conta</h1>
-<p>Por favor, cadastre-se usando o formulário abaixo:</p>
-<div class="register-form">
-  <form method="post">
-    {{ user_form.as_p }}
-    {% csrf_token %}
-    <p><input type="submit" value="Criar minha conta"></p>
-  </form>
+<div class="container" style="margin-top: 60px; margin-bottom: 80px;">
+  <div style="max-width: 700px; margin: 0 auto;">
+
+    <!-- Card de Registro -->
+    <div
+      style="background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid var(--cor-primaria);">
+
+      <!-- Ícone e Título -->
+      <div style="text-align: center; margin-bottom: 30px;">
+        <div
+          style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, var(--cor-primaria) 0%, #d32f2f 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(195, 1, 12, 0.3);">
+          <i class="fas fa-user-plus" style="font-size: 35px; color: white;"></i>
+        </div>
+        <h1 style="color: var(--cor-primaria); font-size: 2rem; margin: 0; font-weight: 700;">Criar uma conta</h1>
+        <p style="color: #666; margin-top: 10px; font-size: 0.95rem;">Preencha o formulário abaixo para se cadastrar</p>
+      </div>
+
+      <!-- Mensagens de Erro -->
+      {% if user_form.errors %}
+      <div
+        style="background: #ffebee; border-left: 4px solid #f44336; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="margin: 0 0 10px 0; color: #c62828; font-weight: 600;">
+          <i class="fas fa-exclamation-circle"></i> Por favor, corrija os erros abaixo:
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #c62828; font-size: 0.9rem;">
+          {% for field, errors in user_form.errors.items %}
+          {% for error in errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <!-- Formulário -->
+      <form method="post" style="margin-top: 25px;">
+        {% csrf_token %}
+
+        <!-- Seção: Dados de Login -->
+        <div style="margin-bottom: 30px;">
+          <h3
+            style="color: var(--cor-primaria); font-size: 1.2rem; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+            <i class="fas fa-user-circle"></i> Dados de Login
+          </h3>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+            <!-- Username -->
+            <div>
+              <label for="{{ user_form.username.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                <i class="fas fa-user" style="color: var(--cor-primaria);"></i> Nome de usuário *
+              </label>
+              <input type="text" name="{{ user_form.username.name }}" id="{{ user_form.username.id_for_label }}"
+                value="{{ user_form.username.value|default:'' }}" class="form-input"
+                placeholder="Escolha um nome de usuário" required maxlength="150">
+              <small style="color: #777; font-size: 0.85rem; display: block; margin-top: 5px;">150 caracteres ou menos.
+                Letras, números e @/./+/-/_ apenas.</small>
+              {% if user_form.username.errors %}
+              <div class="error-message">{{ user_form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="{{ user_form.email.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                <i class="fas fa-envelope" style="color: var(--cor-primaria);"></i> E-mail *
+              </label>
+              <input type="email" name="{{ user_form.email.name }}" id="{{ user_form.email.id_for_label }}"
+                value="{{ user_form.email.value|default:'' }}" class="form-input" placeholder="seu@email.com" required>
+              {% if user_form.email.errors %}
+              <div class="error-message">{{ user_form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Senha -->
+            <div>
+              <label for="{{ user_form.password.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                <i class="fas fa-lock" style="color: var(--cor-primaria);"></i> Senha *
+              </label>
+              <input type="password" name="{{ user_form.password.name }}" id="{{ user_form.password.id_for_label }}"
+                class="form-input" placeholder="Crie uma senha segura" required>
+              {% if user_form.password.errors %}
+              <div class="error-message">{{ user_form.password.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Confirmar Senha -->
+            <div>
+              <label for="{{ user_form.password2.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                <i class="fas fa-lock" style="color: var(--cor-primaria);"></i> Confirme a senha *
+              </label>
+              <input type="password" name="{{ user_form.password2.name }}" id="{{ user_form.password2.id_for_label }}"
+                class="form-input" placeholder="Digite a senha novamente" required>
+              {% if user_form.password2.errors %}
+              <div class="error-message">{{ user_form.password2.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção: Dados Pessoais -->
+        <div style="margin-bottom: 30px;">
+          <h3
+            style="color: var(--cor-primaria); font-size: 1.2rem; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+            <i class="fas fa-id-card"></i> Dados Pessoais
+          </h3>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <!-- Nome -->
+            <div>
+              <label for="{{ user_form.first_name.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                Nome *
+              </label>
+              <input type="text" name="{{ user_form.first_name.name }}" id="{{ user_form.first_name.id_for_label }}"
+                value="{{ user_form.first_name.value|default:'' }}" class="form-input" placeholder="Seu nome" required>
+              {% if user_form.first_name.errors %}
+              <div class="error-message">{{ user_form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Sobrenome -->
+            <div>
+              <label for="{{ user_form.last_name.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                Sobrenome *
+              </label>
+              <input type="text" name="{{ user_form.last_name.name }}" id="{{ user_form.last_name.id_for_label }}"
+                value="{{ user_form.last_name.value|default:'' }}" class="form-input" placeholder="Seu sobrenome"
+                required>
+              {% if user_form.last_name.errors %}
+              <div class="error-message">{{ user_form.last_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- CPF -->
+            <div>
+              <label for="{{ user_form.cpf.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                CPF *
+              </label>
+              <input type="text" name="{{ user_form.cpf.name }}" id="{{ user_form.cpf.id_for_label }}"
+                value="{{ user_form.cpf.value|default:'' }}" class="form-input" placeholder="000.000.000-00" required
+                maxlength="14">
+              {% if user_form.cpf.errors %}
+              <div class="error-message">{{ user_form.cpf.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Telefone -->
+            <div>
+              <label for="{{ user_form.phone.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                Telefone *
+              </label>
+              <input type="text" name="{{ user_form.phone.name }}" id="{{ user_form.phone.id_for_label }}"
+                value="{{ user_form.phone.value|default:'' }}" class="form-input" placeholder="(00) 00000-0000" required
+                maxlength="15">
+              {% if user_form.phone.errors %}
+              <div class="error-message">{{ user_form.phone.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção: Endereço -->
+        <div style="margin-bottom: 30px;">
+          <h3
+            style="color: var(--cor-primaria); font-size: 1.2rem; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+            <i class="fas fa-map-marker-alt"></i> Endereço
+          </h3>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+            <!-- CEP -->
+            <div style="max-width: 250px;">
+              <label for="{{ user_form.postal_code.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                CEP *
+              </label>
+              <input type="text" name="{{ user_form.postal_code.name }}" id="{{ user_form.postal_code.id_for_label }}"
+                value="{{ user_form.postal_code.value|default:'' }}" class="form-input" placeholder="00000-000" required
+                maxlength="9">
+              {% if user_form.postal_code.errors %}
+              <div class="error-message">{{ user_form.postal_code.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Endereço -->
+            <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 15px;">
+              <div>
+                <label for="{{ user_form.address.id_for_label }}"
+                  style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                  Endereço *
+                </label>
+                <input type="text" name="{{ user_form.address.name }}" id="{{ user_form.address.id_for_label }}"
+                  value="{{ user_form.address.value|default:'' }}" class="form-input" placeholder="Rua, Avenida, etc."
+                  required>
+                {% if user_form.address.errors %}
+                <div class="error-message">{{ user_form.address.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ user_form.address_number.id_for_label }}"
+                  style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                  Número *
+                </label>
+                <input type="text" name="{{ user_form.address_number.name }}"
+                  id="{{ user_form.address_number.id_for_label }}"
+                  value="{{ user_form.address_number.value|default:'' }}" class="form-input" placeholder="123" required>
+                {% if user_form.address_number.errors %}
+                <div class="error-message">{{ user_form.address_number.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Complemento -->
+            <div>
+              <label for="{{ user_form.complement.id_for_label }}"
+                style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                Complemento
+              </label>
+              <input type="text" name="{{ user_form.complement.name }}" id="{{ user_form.complement.id_for_label }}"
+                value="{{ user_form.complement.value|default:'' }}" class="form-input"
+                placeholder="Apto 101, Bloco B (opcional)">
+              {% if user_form.complement.errors %}
+              <div class="error-message">{{ user_form.complement.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Cidade e Estado -->
+            <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 15px;">
+              <div>
+                <label for="{{ user_form.city.id_for_label }}"
+                  style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                  Cidade *
+                </label>
+                <input type="text" name="{{ user_form.city.name }}" id="{{ user_form.city.id_for_label }}"
+                  value="{{ user_form.city.value|default:'' }}" class="form-input" placeholder="Sua cidade" required>
+                {% if user_form.city.errors %}
+                <div class="error-message">{{ user_form.city.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ user_form.state.id_for_label }}"
+                  style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;">
+                  Estado *
+                </label>
+                <input type="text" name="{{ user_form.state.name }}" id="{{ user_form.state.id_for_label }}"
+                  value="{{ user_form.state.value|default:'' }}" class="form-input" placeholder="UF" required
+                  maxlength="2" style="text-transform: uppercase;">
+                {% if user_form.state.errors %}
+                <div class="error-message">{{ user_form.state.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botão de Cadastro -->
+        <button type="submit" class="submit-button">
+          <i class="fas fa-user-plus"></i> Criar minha conta
+        </button>
+      </form>
+
+      <!-- Links Adicionais -->
+      <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
+        <p style="margin: 0; font-size: 0.9rem; color: #666;">
+          Já possui uma conta?
+          <a href="{% url 'account:login' %}"
+            style="color: var(--cor-primaria); text-decoration: none; font-weight: 600;">
+            Faça login aqui
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Informação Extra -->
+    <div
+      style="margin-top: 30px; text-align: center; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 12px;">
+      <p style="font-size: 0.95rem; color: #555; margin-bottom: 10px;">
+        <i class="fas fa-shield-alt" style="color: var(--cor-primaria);"></i>
+        <strong>Seus dados estão seguros</strong>
+      </p>
+      <p style="font-size: 0.85rem; color: #777; margin: 0;">
+        Utilizamos criptografia e seguimos as melhores práticas de segurança
+      </p>
+    </div>
+  </div>
 </div>
+
+<style>
+  .form-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-family: inherit;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(195, 1, 12, 0.1);
+  }
+
+  .error-message {
+    color: #f44336;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 15px;
+    background: var(--cor-primaria);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .submit-button:hover {
+    background: #a30109;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(195, 1, 12, 0.3);
+  }
+
+  .submit-button:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    div[style*="padding: 40px"] {
+      padding: 25px !important;
+    }
+
+    div[style*="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    div[style*="grid-template-columns: 3fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
+<script>
+  // Máscaras para os campos
+  document.addEventListener('DOMContentLoaded', function () {
+    // Máscara CPF
+    const cpfInput = document.getElementById('{{ user_form.cpf.id_for_label }}');
+    if (cpfInput) {
+      cpfInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+          value = value.replace(/(\d{3})(\d)/, '$1.$2');
+          value = value.replace(/(\d{3})(\d)/, '$1.$2');
+          value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+          e.target.value = value;
+        }
+      });
+    }
+
+    // Máscara Telefone
+    const phoneInput = document.getElementById('{{ user_form.phone.id_for_label }}');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+          value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+          value = value.replace(/(\d{5})(\d)/, '$1-$2');
+          e.target.value = value;
+        }
+      });
+    }
+
+    // Máscara CEP
+    const cepInput = document.getElementById('{{ user_form.postal_code.id_for_label }}');
+    if (cepInput) {
+      cepInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 8) {
+          value = value.replace(/(\d{5})(\d)/, '$1-$2');
+          e.target.value = value;
+        }
+      });
+    }
+
+    // Estado em maiúsculo
+    const stateInput = document.getElementById('{{ user_form.state.id_for_label }}');
+    if (stateInput) {
+      stateInput.addEventListener('input', function (e) {
+        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2);
+      });
+    }
+  });
+</script>
 {% endblock %}

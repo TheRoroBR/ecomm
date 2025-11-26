@@ -1,11 +1,100 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Bem-vindo{% endblock %}
+{% block title %}Cadastro Realizado - Saúde & Forma{% endblock %}
 
 {% block content %}
-<h1>Bem-vindo {{ new_user.first_name }}!</h1>
-<p>
-  Sua conta foi criada com sucesso.
-  Agora você pode <a href="{% url " login" %}">entrar</a>.
-</p>
+<div class="container" style="margin-top: 60px; margin-bottom: 80px;">
+  <div style="max-width: 600px; margin: 0 auto;">
+
+    <!-- Card de Sucesso -->
+    <div
+      style="background: white; padding: 50px 40px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+
+      <!-- Ícone de Sucesso -->
+      <div
+        style="width: 100px; height: 100px; margin: 0 auto 30px; background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3); animation: successPulse 1.5s ease-out;">
+        <i class="fas fa-check" style="font-size: 50px; color: white;"></i>
+      </div>
+
+      <!-- Título -->
+      <h1 style="color: #4caf50; font-size: 2rem; margin: 0 0 15px 0; font-weight: 700;">
+        Bem-vindo, {{ new_user.first_name }}!
+      </h1>
+
+      <!-- Mensagem -->
+      <div
+        style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: left;">
+        <p style="margin: 0 0 10px 0; color: #2e7d32; font-size: 1.05rem; font-weight: 600;">
+          <i class="fas fa-check-circle"></i> Conta criada com sucesso!
+        </p>
+        <p style="margin: 0; color: #555; font-size: 0.95rem; line-height: 1.6;">
+          Seu cadastro foi concluído. Agora você pode fazer login e começar a explorar nossos produtos.
+        </p>
+      </div>
+
+      <!-- Botão de Login -->
+      <a href="{% url 'account:login' %}"
+        style="display: inline-flex; align-items: center; gap: 10px; padding: 15px 40px; background: var(--cor-primaria); color: white; text-decoration: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s; margin-top: 10px; box-shadow: 0 2px 8px rgba(195, 1, 12, 0.2);">
+        <i class="fas fa-sign-in-alt"></i> Fazer Login
+      </a>
+
+      <!-- Link Alternativo -->
+      <p style="margin-top: 30px; padding-top: 25px; border-top: 1px solid #e0e0e0; color: #666; font-size: 0.9rem;">
+        Ou continue navegando:
+        <a href="{% url 'shop:homepage' %}"
+          style="color: var(--cor-primaria); text-decoration: none; font-weight: 600; margin-left: 5px;">
+          <i class="fas fa-home"></i> Ir para a loja
+        </a>
+      </p>
+    </div>
+
+    <!-- Informações Adicionais -->
+    <div
+      style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 12px; text-align: center;">
+      <p style="font-size: 0.95rem; color: #555; margin: 0;">
+        <i class="fas fa-envelope" style="color: var(--cor-primaria);"></i>
+        Um e-mail de confirmação foi enviado para <strong>{{ new_user.email }}</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes successPulse {
+    0% {
+      transform: scale(0.5);
+      opacity: 0;
+    }
+
+    50% {
+      transform: scale(1.1);
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  a[href*="login"]:hover {
+    background: #a30109;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(195, 1, 12, 0.3);
+  }
+
+  a[href*="login"]:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 576px) {
+    div[style*="padding: 50px 40px"] {
+      padding: 30px 25px !important;
+    }
+
+    h1 {
+      font-size: 1.5rem !important;
+    }
+  }
+</style>
 {% endblock %}
