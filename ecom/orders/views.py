@@ -9,6 +9,30 @@ from cart.cart import Cart
 
 def order_create(request):
     cart = Cart(request)
+    
+    # Prepare initial data from user profile
+    initial_data = {}
+    if request.user.is_authenticated:
+        initial_data['first_name'] = request.user.first_name
+        initial_data['last_name'] = request.user.last_name
+        initial_data['email'] = request.user.email
+        
+        # Get profile data if exists
+        if hasattr(request.user, 'profile'):
+            profile = request.user.profile
+            initial_data['phone'] = profile.phone or ''
+            initial_data['postal_code'] = profile.postal_code or ''
+            # Combine address fields
+            if profile.address:
+                address_parts = [profile.address]
+                if profile.address_number:
+                    address_parts.append(profile.address_number)
+                if profile.complement:
+                    address_parts.append(profile.complement)
+                initial_data['address'] = ', '.join(address_parts)
+            initial_data['city'] = profile.city or ''
+            initial_data['state'] = profile.state or ''
+    
     if request.method == 'POST':
         form = OrderCreateForm(request.POST)
         if form.is_valid():
@@ -63,7 +87,36 @@ def order_create(request):
                 'last_name': request.user.last_name,
                 'email': request.user.email,
             }
+            # Get profile data if exists
+            if hasattr(request.user, 'profile'):
+                profile = request.user.profile
+                initial_data['phone'] = profile.phone or ''
+                initial_data['postal_code'] = profile.postal_code or ''
+                # Combine address fields
+                if profile.address:
+                    address_parts = [profile.address]
+                    if profile.address_number:
+                        address_parts.append(profile.address_number)
+                    if profile.complement:
+                        address_parts.append(profile.complement)
+                    initial_data['address'] = ', '.join(address_parts)
+                initial_data['city'] = profile.city or ''
+                initial_data['state'] = profile.state or ''
         form = OrderCreateForm(initial=initial_data)
     return render(request,
                   'orders/order/create.html',
                   {'cart': cart, 'form': form})
+
+
+def order_detail(request, order_id):
+    from django.shortcuts import get_object_or_404
+    from .models import Order
+    
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Security: Only allow user to see their own orders or allow staff to see all
+    if not request.user.is_staff and order.user != request.user:
+        from django.http import HttpResponseForbidden
+        return HttpResponseForbidden("Voc\u00ea n\u00e3o tem permiss\u00e3o para ver este pedido.")
+    
+    return render(request, 'orders/order/detail.html', {'order': order})

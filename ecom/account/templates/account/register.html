@@ -5,9 +5,11 @@
 {% block content %}
 <h1>Criar uma conta</h1>
 <p>Por favor, cadastre-se usando o formulário abaixo:</p>
-<form method="post">
-  {{ user_form.as_p }}
-  {% csrf_token %}
-  <p><input type="submit" value="Criar minha conta"></p>
-</form>
+<div class="register-form">
+  <form method="post">
+    {{ user_form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="Criar minha conta"></p>
+  </form>
+</div>
 {% endblock %}

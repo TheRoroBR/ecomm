@@ -4,19 +4,23 @@
 
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Minha Loja{% endblock %}</title>
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
-  <link href="{% static 'css/base.css' %}" rel="stylesheet">
-  <link href="{% static 'css/homepage.css' %}?v=6" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="{% static 'css/saude_forma.css' %}" rel="stylesheet">
+  <link href="{% static 'css/cart.css' %}" rel="stylesheet">
   {% block extra_css %}{% endblock %}
 </head>
 
 <body>
+  <a href="#main-content" class="skip-to-main">Pular para o conteúdo principal</a>
   {% include 'includes/header.html' %}
+
   <div id="content">
     {% if messages %}
-    <ul class="messages">
+    <ul class="messages container">
       {% for message in messages %}
       <li class="{{ message.tags }}">
         {{ message|safe }}
@@ -25,20 +29,87 @@
       {% endfor %}
     </ul>
     {% endif %}
-    {% block content %}
-    {% endblock %}
+    <main id="main-content" role="main">
+      {% block content %}
+      {% endblock %}
+    </main>
   </div>
+
+  <footer class="c-footer">
+    <div class="container">
+      <div class="c-footer__grid">
+        <div class="c-footer__coluna">
+          <h3>Sobre a Saúde & Forma</h3>
+          <p>Sua loja especializada em suplementos e artigos esportivos. Qualidade e preço justo para você alcançar seus
+            objetivos.</p>
+        </div>
+        <div class="c-footer__coluna">
+          <h3>Links Úteis</h3>
+          <ul class="c-footer__links">
+            <li><a href="{% url 'shop:product_list' %}">Produtos</a></li>
+            <li><a href="{% url 'shop:sobre' %}">Sobre Nós</a></li>
+            <li><a href="{% url 'shop:privacidade' %}">Política de Privacidade</a></li>
+            <li><a href="{% url 'shop:termos' %}">Termos de Uso</a></li>
+          </ul>
+        </div>
+        <div class="c-footer__coluna">
+          <h3>Contato</h3>
+          <ul class="c-footer__links">
+            <li><a href="tel:554736226901" style="color: inherit; text-decoration: none;"><i class="fas fa-phone"></i>
+                (47) 3622-6901</a></li>
+            <li><a href="mailto:saude_e_forma@hotmail.com" style="color: inherit; text-decoration: none;"><i
+                  class="fas fa-envelope"></i> saude_e_forma@hotmail.com</a></li>
+            <li><a href="https://share.google/oy1I10BcIwLedKcJh" target="_blank"
+                style="color: inherit; text-decoration: none;"><i class="fas fa-map-marker-alt"></i> Rua Major Vieira,
+                401, Centro, Canoinhas - SC</a></li>
+          </ul>
+          <div class="c-footer__social" style="margin-top: 15px;">
+            <a href="https://www.instagram.com/saudeeforma" target="_blank" class="c-footer__social-link instagram"
+              title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/saudeeformaa" target="_blank" class="c-footer__social-link facebook"
+              title="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="https://api.whatsapp.com/send/?phone=554736226901" target="_blank"
+              class="c-footer__social-link whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="c-footer__bottom">
+        <p>CNPJ: 13.779.804/0001-82 &copy; 2025 Saúde & Forma. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+      // Quantity Selector Logic
+      document.querySelectorAll('.quantity-selector').forEach(selector => {
+        const minusBtn = selector.querySelector('.minus');
+        const plusBtn = selector.querySelector('.plus');
+        const input = selector.querySelector('.qty-input');
+
+        minusBtn.addEventListener('click', () => {
+          let value = parseInt(input.value);
+          if (value > 1) {
+            input.value = value - 1;
+          }
+        });
+
+        plusBtn.addEventListener('click', () => {
+          let value = parseInt(input.value);
+          input.value = value + 1;
+        });
+      });
+
+      // Add to Cart Logic
       const forms = document.querySelectorAll('.add-to-cart-form');
-      
+
       forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
           e.preventDefault();
-          
+
           const url = this.action;
           const formData = new FormData(this);
-          
+
           fetch(url, {
             method: 'POST',
             body: formData,
@@ -46,43 +117,51 @@
               'X-Requested-With': 'XMLHttpRequest',
             }
           })
-          .then(response => {
+            .then(response => {
               if (!response.ok) {
-                  return response.json().then(data => { throw new Error(data.error || 'Erro ao adicionar ao carrinho'); });
+                return response.json().then(data => { throw new Error(data.error || 'Erro ao adicionar ao carrinho'); });
               }
               return response.json();
-          })
-          .then(data => {
-            if (data.success) {
-              const cartCount = document.getElementById('cart-count');
-              if (cartCount) {
-                 const formattedPrice = data.cart_total_price.toFixed(2).replace('.', ',');
-                 cartCount.innerHTML = `(${data.cart_total_items}) &nbsp;|&nbsp; R$ ${formattedPrice}`;
-              }
-              
-              // Visual feedback
-              const btn = form.querySelector('button[type="submit"], input[type="submit"]');
-              if(btn) {
+            })
+            .then(data => {
+              if (data.success) {
+                // Update Desktop Badge
+                const desktopBadge = document.getElementById('cart-badge-desktop');
+                if (desktopBadge) {
+                  desktopBadge.textContent = data.cart_total_items;
+                  desktopBadge.style.display = data.cart_total_items > 0 ? 'flex' : 'none';
+                }
+
+                // Update Mobile Badge
+                const mobileBadge = document.getElementById('cart-badge-mobile');
+                if (mobileBadge) {
+                  mobileBadge.textContent = data.cart_total_items;
+                  mobileBadge.style.display = data.cart_total_items > 0 ? 'flex' : 'none';
+                }
+
+                // Visual feedback
+                const btn = form.querySelector('button[type="submit"], input[type="submit"]');
+                if (btn) {
                   const originalText = btn.textContent || btn.value;
                   const isInput = btn.tagName === 'INPUT';
-                  
-                  if(isInput) btn.value = 'Adicionado!';
+
+                  if (isInput) btn.value = 'Adicionado!';
                   else btn.textContent = 'Adicionado!';
-                  
+
                   btn.disabled = true;
-                  
+
                   setTimeout(() => {
-                      if(isInput) btn.value = originalText;
-                      else btn.textContent = originalText;
-                      btn.disabled = false;
+                    if (isInput) btn.value = originalText;
+                    else btn.textContent = originalText;
+                    btn.disabled = false;
                   }, 1500);
+                }
               }
-            }
-          })
-          .catch(error => {
+            })
+            .catch(error => {
               console.error('Error:', error);
               alert(error.message);
-          });
+            });
         });
       });
     });

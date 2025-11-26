@@ -1,46 +1,135 @@
-{% load static %}
-<!-- Skip link for keyboard users -->
-<a class="skip-link" href="#content">Pular para o conteúdo</a>
-
-<header class="main-header">
-  <div class="header-top">
-    <div class="logo">
-      <a href="/" style="color: white; text-decoration: none;">💪 ECOMM FITNESS</a>
+﻿{% load static %}
+<header class="c-header" role="banner">
+    <div class="c-header__main">
+        <div class="container">
+            <a href="/" class="c-header__logo-link" aria-label="Saúde & Forma - Página Inicial">
+                <img src="{% static 'img/logo.png' %}" alt="Saúde & Forma" class="c-header__logo-img">
+            </a>
+            <div class="c-header__desktop-elements">
+                <nav class="c-header__contato-main" aria-label="Links de contato e redes sociais">
+                    <a href="https://api.whatsapp.com/send/?phone=554736226901" target="_blank"
+                        rel="noopener noreferrer" class="c-header__icon-link whatsapp-link"
+                        aria-label="WhatsApp (47) 3622-6901">
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i> <span>(47) 3622-6901</span>
+                    </a>
+                    <a href="https://www.instagram.com/saudeeforma" target="_blank" rel="noopener noreferrer"
+                        class="c-header__icon-link social-icon instagram" aria-label="Instagram">
+                        <i class="fab fa-instagram" aria-hidden="true"></i>
+                    </a>
+                    <a href="https://www.facebook.com/saudeeformaa" target="_blank" rel="noopener noreferrer"
+                        class="c-header__icon-link social-icon facebook" aria-label="Facebook">
+                        <i class="fab fa-facebook" aria-hidden="true"></i>
+                    </a>
+                </nav>
+                <div class="c-busca">
+                    <form action="{% url 'shop:product_list' %}" method="get" class="c-busca__form" role="search"
+                        aria-label="Buscar produtos">
+                        <label for="search-input" class="visually-hidden">Buscar produtos</label>
+                        <input type="text" id="search-input" name="q" class="c-busca__input"
+                            placeholder="O que você procura hoje?" value="{{ request.GET.q|default:'' }}"
+                            aria-label="Campo de busca">
+                        <button type="submit" class="c-busca__btn" aria-label="Buscar"><i class="fas fa-search"
+                                aria-hidden="true"></i></button>
+                    </form>
+                </div>
+                <div class="c-header__user-main">
+                    {% if request.user.is_authenticated %}
+                    <div class="c-header__user-info">
+                        <span>Olá, <strong>{{ request.user.first_name|default:request.user.username }}</strong></span>
+                        <form method="post" action="{% url 'account:logout' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="c-header__logout-btn" aria-label="Sair da conta"><i
+                                    class="fas fa-sign-out-alt" aria-hidden="true"></i></button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'account:login' %}" class="c-header__login-link" aria-label="Entrar na conta"><i
+                            class="fas fa-sign-in-alt" aria-hidden="true"></i> Entrar</a>
+                    {% endif %}
+                </div>
+                <nav class="c-header__acoes" aria-label="Ações do usuário">
+                    <a href="{% url 'account:dashboard' %}" class="c-header__acao-btn" aria-label="Minha Conta">
+                        <i class="far fa-user" aria-hidden="true"></i>
+                        <span>Minha Conta</span>
+                    </a>
+                    <a href="{% url 'cart:cart_detail' %}" class="c-header__acao-btn" id="cart-btn-desktop"
+                        aria-label="Carrinho de compras">
+                        <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                        <span>Carrinho</span>
+                        {% with total_items=cart|length %}<span class="c-header__carrinho-badge" id="cart-badge-desktop"
+                            {% if total_items == 0 %}style="display: none;" {% endif %}
+                            aria-label="{{ total_items }} itens no carrinho">{{ total_items }}</span>{% endwith %}
+                    </a>
+                </nav>
+            </div>
+            <nav class="c-header__mobile-contact" aria-label="Contatos mobile">
+                <a href="https://www.instagram.com/saudeeforma" target="_blank" rel="noopener noreferrer"
+                    class="c-header__icon-link social-icon instagram" aria-label="Instagram">
+                    <i class="fab fa-instagram" aria-hidden="true"></i>
+                </a>
+                <a href="https://www.facebook.com/saudeeformaa" target="_blank" rel="noopener noreferrer"
+                    class="c-header__icon-link social-icon facebook" aria-label="Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+                <a href="https://api.whatsapp.com/send/?phone=554736226901" target="_blank" rel="noopener noreferrer"
+                    class="c-header__icon-link whatsapp-link" aria-label="WhatsApp">
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                </a>
+            </nav>
+        </div>
     </div>
-    <div class="header-search">
-      <form action="{% url 'shop:product_list' %}" method="get">
-        <input type="text" name="q" placeholder="O que você procura?" class="search-input" value="{{ request.GET.q|default:'' }}" />
-        <button type="submit" class="search-btn">🔍</button>
-      </form>
-    </div>
-    <div class="header-actions">
-      {% if request.user.is_authenticated %}
-      <a href="{% url 'account:dashboard' %}" class="user-btn">👤 Painel ({{ request.user.first_name|default:request.user.username }})</a>
-      <form method="post" action="{% url 'account:logout' %}" style="display:inline">
-        {% csrf_token %}
-        <button type="submit" class="user-btn" style="cursor:pointer;">Sair</button>
-      </form>
-      {% else %}
-      <a href="{% url 'account:login' %}" class="user-btn">👤 Entrar</a>
-      {% endif %}
-      
-      <a href="{% url 'cart:cart_detail' %}" class="cart-btn" id="cart-link">
-        🛒 Carrinho 
-        {% with total_items=cart|length %}
-        <span id="cart-count">
-          {% if total_items > 0 %}
-          ({{ total_items }}) &nbsp;|&nbsp; R$ {{ cart.get_total_price|floatformat:2 }}
-          {% endif %}
-        </span>
-        {% endwith %}
-      </a>
-    </div>
-  </div>
-  <nav class="main-nav">
-    <a href="{% url 'shop:homepage' %}" class="nav-item {% if request.resolver_match.view_name == 'shop:homepage' %}active{% endif %}">INÍCIO</a>
-    {% for c in categories %}
-    <a href="{{ c.get_absolute_url }}" class="nav-item {% if category and category.slug == c.slug %}active{% endif %}">{{ c.name|upper }}</a>
-    {% endfor %}
-    <a href="#" class="nav-item promo">BLACK FRIDAY</a>
-  </nav>
+    <nav class="c-nav" role="navigation" aria-label="Navegação principal">
+        <div class="container c-nav__container">
+            <button class="c-nav__toggle" id="mobile-menu-btn" aria-label="Abrir menu de navegação"
+                aria-expanded="false" aria-controls="nav-menu">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <form action="{% url 'shop:product_list' %}" method="get" class="c-nav__mobile-search-form" role="search"
+                aria-label="Busca mobile">
+                <label for="mobile-search-input" class="visually-hidden">Buscar produtos</label>
+                <input type="text" id="mobile-search-input" name="q" placeholder="Buscar..."
+                    value="{{ request.GET.q|default:'' }}" aria-label="Campo de busca mobile">
+                <button type="submit" aria-label="Buscar"><i class="fas fa-search" aria-hidden="true"></i></button>
+            </form>
+            <div class="c-nav__mobile-actions">
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'account:dashboard' %}" class="c-nav__mobile-btn" aria-label="Minha conta">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                </a>
+                {% else %}
+                <a href="{% url 'account:login' %}" class="c-nav__mobile-btn" aria-label="Entrar">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                </a>
+                {% endif %}
+                <a href="{% url 'cart:cart_detail' %}" class="c-nav__mobile-btn" style="position: relative;"
+                    id="cart-btn-mobile" aria-label="Carrinho de compras mobile">
+                    <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                    {% with total_items=cart|length %}<span class="c-header__carrinho-badge" id="cart-badge-mobile"
+                        style="top: -5px; right: -5px; width: 16px; height: 16px; font-size: 0.6rem; {% if total_items == 0 %}display: none;{% endif %}"
+                        aria-label="{{ total_items }} itens no carrinho">{{
+                        total_items }}</span>{% endwith %}
+                </a>
+            </div>
+            <div class="c-nav__menu" id="nav-menu">
+                <a href="{% url 'shop:homepage' %}"
+                    class="c-nav__link {% if request.resolver_match.view_name == 'shop:homepage' %}active{% endif %}"
+                    aria-current="{% if request.resolver_match.view_name == 'shop:homepage' %}page{% endif %}">Início</a>
+                {% for c in categories %}
+                <a href="{{ c.get_absolute_url }}"
+                    class="c-nav__link {% if category and category.slug == c.slug %}active{% endif %}"
+                    aria-current="{% if category and category.slug == c.slug %}page{% endif %}">{{ c.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </nav>
 </header>
+<script>
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const navMenu = document.getElementById('nav-menu');
+
+    menuBtn.addEventListener('click', function () {
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', !isExpanded);
+        navMenu.classList.toggle('active');
+    });
+</script>

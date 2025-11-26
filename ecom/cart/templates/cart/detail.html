@@ -6,236 +6,126 @@ Seu carrinho de compras
 {% endblock %}
 
 {% block content %}
-<h1>Seu carrinho de compras</h1>
-<table class="cart">
-  <thead>
-    <tr>
-      <th>Imagem</th>
-      <th>Produto</th>
-      <th>Quantidade</th>
-      <th>Remover</th>
-      <th>Preço unitário</th>
-      <th>Preço</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for item in cart %}
-    {% with product=item.product %}
-    <tr>
-      <td>
-        <a href="{{ product.get_absolute_url }}">
-          <img src="{% if product.image %}{{ product.image.url }}
-                {% else %}{% static " img/no_image.png" %}{% endif %}">
-        </a>
-      </td>
-      <td>{{ product.name }}</td>
-      <td>
-        <div class="quantity-control" data-product-id="{{ product.id }}" data-stock="{{ product.stock|default:999999 }}">
-            <button class="qty-btn minus" {% if item.quantity <= 1 %}disabled{% endif %}>-</button>
-            <span class="qty-display">{{ item.quantity }}</span>
-            <button class="qty-btn plus" {% if product.stock and item.quantity >= product.stock %}disabled{% endif %}>+</button>
+<div class="cart-container">
+    <h1 class="cart-title" id="cart-title">Seu carrinho de compras</h1>
+
+    {% if cart %}
+    <!-- Desktop Table View -->
+    <div class="cart-desktop">
+        <table class="cart" role="table" aria-labelledby="cart-title">
+            <thead>
+                <tr>
+                    <th scope="col">Imagem</th>
+                    <th scope="col">Produto</th>
+                    <th scope="col">Quantidade</th>
+                    <th scope="col">Remover</th>
+                    <th scope="col">Preço unitário</th>
+                    <th scope="col">Preço</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                {% with product=item.product %}
+                <tr>
+                    <td data-label="Imagem">
+                        <a href="{{ product.get_absolute_url }}" aria-label="Ver detalhes de {{ product.name }}">
+                            <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+                                alt="{{ product.name }}">
+                        </a>
+                    </td>
+                    <td data-label="Produto">{{ product.name }}</td>
+                    <td data-label="Quantidade">
+                        <form action="{% url 'cart:cart_add' product.id %}" method="post" class="quantity-form"
+                            aria-label="Atualizar quantidade de {{ product.name }}">
+                            <label for="id_quantity_{{ product.id }}" class="visually-hidden">Quantidade de {{
+                                product.name }}</label>
+                            {{ item.update_quantity_form.quantity }}
+                            {{ item.update_quantity_form.override }}
+                            <input type="submit" value="Atualizar"
+                                aria-label="Atualizar quantidade de {{ product.name }}">
+                            {% csrf_token %}
+                        </form>
+                    </td>
+                    <td data-label="Remover">
+                        <form action="{% url 'cart:cart_remove' product.id %}" method="post" class="remove-form"
+                            aria-label="Remover {{ product.name }} do carrinho">
+                            <input type="submit" value="Remover" class="btn-remove"
+                                aria-label="Remover {{ product.name }} do carrinho">
+                            {% csrf_token %}
+                        </form>
+                    </td>
+                    <td data-label="Preço unitário" class="num">R$ {{ item.price }}</td>
+                    <td data-label="Preço" class="num">R$ {{ item.total_price }}</td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+                <tr class="total">
+                    <td colspan="5">Total</td>
+                    <td class="num">R$ {{ cart.get_total_price }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="cart-mobile" role="list" aria-label="Itens no carrinho">
+        {% for item in cart %}
+        {% with product=item.product %}
+        <article class="cart-item-card" role="listitem">
+            <div class="cart-item-image">
+                <a href="{{ product.get_absolute_url }}" aria-label="Ver detalhes de {{ product.name }}">
+                    <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+                        alt="{{ product.name }}">
+                </a>
+            </div>
+            <div class="cart-item-details">
+                <h3 class="cart-item-name">
+                    <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                </h3>
+                <div class="cart-item-prices">
+                    <span class="cart-item-unit-price">R$ {{ item.price }}</span>
+                    <span class="cart-item-total-price">Total: R$ {{ item.total_price }}</span>
+                </div>
+                <div class="cart-item-actions">
+                    <form action="{% url 'cart:cart_add' product.id %}" method="post" class="quantity-form-mobile"
+                        aria-label="Atualizar quantidade de {{ product.name }}">
+                        <label for="id_quantity_mobile_{{ product.id }}">Quantidade:</label>
+                        {{ item.update_quantity_form.quantity }}
+                        {{ item.update_quantity_form.override }}
+                        <input type="submit" value="Atualizar" class="btn-update-mobile"
+                            aria-label="Atualizar quantidade de {{ product.name }}">
+                        {% csrf_token %}
+                    </form>
+                    <form action="{% url 'cart:cart_remove' product.id %}" method="post" class="remove-form-mobile"
+                        aria-label="Remover {{ product.name }} do carrinho">
+                        <input type="submit" value="Remover" class="btn-remove-mobile"
+                            aria-label="Remover {{ product.name }} do carrinho">
+                        {% csrf_token %}
+                    </form>
+                </div>
+            </div>
+        </article>
+        {% endwith %}
+        {% endfor %}
+
+        <div class="cart-total-mobile" role="status" aria-live="polite">
+            <span class="total-label">Total:</span>
+            <span class="total-value" aria-label="Total do carrinho">R$ {{ cart.get_total_price }}</span>
         </div>
-      </td>
-      <td>
-        <div class="remove-control" data-product-id="{{ product.id }}">
-            <button class="remove-btn initial">🗑️</button>
-            <button class="remove-btn confirm" style="display:none;">❌ Confirmar</button>
-        </div>
-      </td>
-      <td class="num">R$ {{ item.price }}</td>
-      <td class="num item-total">R$ {{ item.total_price|floatformat:2 }}</td>
-    </tr>
-    {% endwith %}
-    {% endfor %}
-    <tr class="total">
-      <td>Total</td>
-      <td colspan="4"></td>
-      <td class="num">R$ {{ cart.get_total_price|floatformat:2 }}</td>
-    </tr>
-  </tbody>
-</table>
-<div class="cart-actions">
-  <a href="{% url "shop:product_list" %}" class="button light">Continuar comprando</a>
-  <a href="{% url "orders:order_create" %}" class="button">Finalizar compra</a>
+    </div>
+
+    <nav class="cart-actions" aria-label="Ações do carrinho">
+        <a href="{% url 'shop:product_list' %}" class="button button-light" aria-label="Continuar comprando">Continuar
+            comprando</a>
+        <a href="{% url 'orders:order_create' %}" class="button button-primary" aria-label="Finalizar compra">Finalizar
+            compra</a>
+    </nav>
+    {% else %}
+    <div class="cart-empty" role="status">
+        <p>Seu carrinho está vazio.</p>
+        <a href="{% url 'shop:product_list' %}" class="button button-primary" aria-label="Ir às compras">Ir às
+            compras</a>
+    </div>
+    {% endif %}
 </div>
-
-<style>
-    .quantity-control {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .qty-btn {
-        background: #333;
-        color: white;
-        border: none;
-        width: 30px;
-        height: 30px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .qty-btn:hover:not(:disabled) {
-        background: #cc0000;
-    }
-    .qty-btn:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
-    .qty-display {
-        font-weight: bold;
-        min-width: 20px;
-        text-align: center;
-    }
-    .remove-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1.2em;
-        transition: all 0.3s;
-    }
-    .remove-btn.confirm {
-        color: #cc0000;
-        font-size: 0.9em;
-        font-weight: bold;
-        border: 1px solid #cc0000;
-        padding: 5px 10px;
-        border-radius: 4px;
-    }
-    .remove-btn.confirm:hover {
-        background: #cc0000;
-        color: white;
-    }
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Quantity Control
-    document.querySelectorAll('.quantity-control').forEach(control => {
-        const minusBtn = control.querySelector('.minus');
-        const plusBtn = control.querySelector('.plus');
-        const display = control.querySelector('.qty-display');
-        const productId = control.dataset.productId;
-        const stock = parseInt(control.dataset.stock);
-
-        const updateQuantity = (change) => {
-            let currentQty = parseInt(display.textContent);
-            let newQty = currentQty + change;
-
-            if (newQty < 1) return;
-            if (stock && newQty > stock) return;
-
-            const formData = new FormData();
-            formData.append('quantity', newQty);
-            formData.append('override', 'True');
-            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-
-            fetch(`/cart/add/${productId}/`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    display.textContent = data.item_quantity;
-                    
-                    // Update item total price
-                    const row = control.closest('tr');
-                    const itemTotal = row.querySelector('.item-total');
-                    const formattedItemTotal = data.item_total_price.toFixed(2).replace('.', ',')
-                    itemTotal.textContent = `R$ ${formattedItemTotal}`;
-
-                    // Update cart total in header and footer
-                    const cartCount = document.getElementById('cart-count');
-                    if (cartCount) {
-                        const formattedTotal = data.cart_total_price.toFixed(2).replace('.', ',');
-                        cartCount.innerHTML = `(${data.cart_total_items}) &nbsp;|&nbsp; R$ ${formattedTotal}`;
-                    }
-                    
-                    // Update table total
-                    const tableTotal = document.querySelector('tr.total .num');
-                    if (tableTotal) {
-                         const formattedTotal = data.cart_total_price.toFixed(2).replace('.', ',');
-                         tableTotal.textContent = `R$ ${formattedTotal}`;
-                    }
-
-                    // Update button states
-                    minusBtn.disabled = data.item_quantity <= 1;
-                    plusBtn.disabled = stock && data.item_quantity >= stock;
-                } else if (data.error) {
-                    alert(data.error);
-                }
-            })
-            .catch(err => console.error(err));
-        };
-
-        minusBtn.addEventListener('click', () => updateQuantity(-1));
-        plusBtn.addEventListener('click', () => updateQuantity(1));
-    });
-
-    // Remove Control
-    document.querySelectorAll('.remove-control').forEach(control => {
-        const initialBtn = control.querySelector('.initial');
-        const confirmBtn = control.querySelector('.confirm');
-        const productId = control.dataset.productId;
-
-        initialBtn.addEventListener('click', () => {
-            initialBtn.style.display = 'none';
-            confirmBtn.style.display = 'inline-block';
-            
-            // Reset after 3 seconds if not confirmed
-            setTimeout(() => {
-                initialBtn.style.display = 'inline-block';
-                confirmBtn.style.display = 'none';
-            }, 3000);
-        });
-
-        confirmBtn.addEventListener('click', () => {
-            const formData = new FormData();
-            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-
-            fetch(`/cart/remove/${productId}/`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Remove row
-                    const row = control.closest('tr');
-                    row.remove();
-
-                    // Update totals
-                    const cartCount = document.getElementById('cart-count');
-                    if (cartCount) {
-                        const formattedTotal = data.cart_total_price.toFixed(2).replace('.', ',');
-                        cartCount.innerHTML = `(${data.cart_total_items}) &nbsp;|&nbsp; R$ ${formattedTotal}`;
-                    }
-                    
-                    const tableTotal = document.querySelector('tr.total .num');
-                    if (tableTotal) {
-                         const formattedTotal = data.cart_total_price.toFixed(2).replace('.', ',');
-                         tableTotal.textContent = `R$ ${formattedTotal}`;
-                    }
-                    
-                    // If cart is empty, maybe reload or show message (optional)
-                    if (data.cart_total_items === 0) {
-                        location.reload();
-                    }
-                }
-            });
-        });
-    });
-});
-</script>
 {% endblock %}

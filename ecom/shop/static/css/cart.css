@@ -1,0 +1,446 @@
+/* Cart Container */
+.cart-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.cart-title {
+    font-size: 28px;
+    color: #1a1a1a;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* Desktop Table View */
+.cart-desktop {
+    display: block;
+}
+
+.cart-mobile {
+    display: none;
+}
+
+table.cart {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table.cart thead th {
+    background: #e31e24;
+    color: #fff;
+    padding: 15px;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    text-align: left;
+}
+
+table.cart tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background 0.3s;
+}
+
+table.cart tbody tr:hover {
+    background: #f9f9f9;
+}
+
+table.cart td {
+    padding: 20px 15px;
+    vertical-align: middle;
+}
+
+table.cart img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+table.cart tr.total {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+table.cart tr.total td {
+    border: none;
+    padding: 20px 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+table.cart tr.total td.num {
+    color: #e31e24;
+    font-size: 24px;
+}
+
+/* Form Styling */
+.quantity-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quantity-form input[type="number"] {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.quantity-form input[type="submit"] {
+    padding: 8px 15px;
+    background: #e31e24;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background 0.3s;
+}
+
+.quantity-form input[type="submit"]:hover {
+    background: #b81620;
+}
+
+.remove-form .btn-remove {
+    padding: 8px 15px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background 0.3s;
+}
+
+.remove-form .btn-remove:hover {
+    background: #000;
+}
+
+/* Cart Actions */
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+    padding-bottom: 50px;
+    flex-wrap: wrap;
+}
+
+.button {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.button-primary {
+    background: #e31e24;
+    color: #fff;
+}
+
+.button-primary:hover {
+    background: #b81620;
+    transform: translateY(-2px);
+}
+
+.button-light {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.button-light:hover {
+    background: #e0e0e0;
+}
+
+/* Empty Cart */
+.cart-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.cart-empty p {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Mobile Card View - Hidden on Desktop */
+.cart-item-card {
+    display: none;
+}
+
+/* ==================== TABLET ==================== */
+@media (max-width: 1024px) {
+    .cart-container {
+        padding: 15px;
+    }
+
+    table.cart img {
+        width: 60px;
+        height: 60px;
+    }
+
+    table.cart thead th {
+        font-size: 11px;
+        padding: 12px 8px;
+    }
+
+    table.cart td {
+        padding: 15px 8px;
+        font-size: 14px;
+    }
+
+    .quantity-form input[type="number"] {
+        width: 50px;
+    }
+}
+
+/* ==================== MOBILE ==================== */
+@media (max-width: 768px) {
+    .cart-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    /* Hide desktop table */
+    .cart-desktop {
+        display: none;
+    }
+
+    /* Show mobile cards */
+    .cart-mobile {
+        display: block;
+    }
+
+    /* Mobile Card Styling */
+    .cart-item-card {
+        display: flex;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .cart-item-image {
+        flex-shrink: 0;
+    }
+
+    .cart-item-image img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        border-radius: 4px;
+        border: 1px solid #eee;
+    }
+
+    .cart-item-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cart-item-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin: 0;
+    }
+
+    .cart-item-name a {
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+
+    .cart-item-prices {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .cart-item-unit-price {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .cart-item-total-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: #e31e24;
+    }
+
+    .cart-item-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .quantity-form-mobile {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .quantity-form-mobile label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .quantity-form-mobile input[type="number"] {
+        width: 60px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .btn-update-mobile {
+        padding: 8px 15px;
+        background: #e31e24;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .btn-remove-mobile {
+        padding: 8px 15px;
+        background: #333;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        width: 100%;
+    }
+
+    /* Mobile Total */
+    .cart-total-mobile {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .total-label {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .total-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #e31e24;
+    }
+
+    /* Mobile Actions */
+    .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .button {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .cart-empty {
+        padding: 40px 20px;
+    }
+}
+
+/* ==================== SMALL MOBILE ==================== */
+@media (max-width: 480px) {
+    .cart-container {
+        padding: 10px;
+    }
+
+    .cart-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    .cart-item-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .cart-item-image img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .cart-item-details {
+        width: 100%;
+        align-items: center;
+    }
+
+    .cart-item-name {
+        font-size: 15px;
+    }
+
+    .cart-item-prices {
+        align-items: center;
+    }
+
+    .cart-item-actions {
+        width: 100%;
+    }
+
+    .quantity-form-mobile {
+        justify-content: center;
+    }
+
+    .cart-total-mobile {
+        padding: 15px;
+    }
+
+    .total-label {
+        font-size: 16px;
+    }
+
+    .total-value {
+        font-size: 20px;
+    }
+}
